@@ -2,18 +2,20 @@ import pytest
 from selene import browser
 
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 def set_browser_size():
-    browser.driver().set_window_size(1000, 800)
+    browser.config.driver_name = "chrome"
+    browser.config.window_height = 1000
+    browser.config.window_width = 800
 
 
 @pytest.fixture
 def open_browser():
-    browser.open_url('https://google.com')
+    browser.open('https://google.com')
 
 
 @pytest.fixture
 def open_browser_with_message():
-    browser.open_url('https://google.com')
+    browser.open('https://google.com')
     yield
     print('По вашему запросу нет полезных результатов')

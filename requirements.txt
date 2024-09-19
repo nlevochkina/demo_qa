@@ -1,2 +1,2 @@
 pytest
-selene
+selene>=2.0.0rc9

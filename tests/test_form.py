@@ -9,8 +9,8 @@ def test_fill_out_the_form():
 
     # WHEN
 
-    browser.element('#firstName').should(be.blank).type('Наталия')
-    browser.element('#lastName').should(be.blank).type('Левочкина')
+    browser.element('#firstName').should(be.blank).type('Natalia')
+    browser.element('#lastName').should(be.blank).type('La')
     browser.element('#userEmail').should(be.blank).type('natalia@mail.ru')
     browser.element('label[for="gender-radio-2"]').click()
     browser.element('#userNumber').should(be.blank).type('1234567890')
@@ -24,7 +24,7 @@ def test_fill_out_the_form():
     browser.element('#subjectsInput').type('Computer Science').press_enter()
 
     browser.element('label[for="hobbies-checkbox-1"]').click()
-    browser.element('#currentAddress').should(be.blank).type('Москва, улица Московская, дом 56')
+    browser.element('#currentAddress').should(be.blank).type('Moscow Street, 56, Moscow, Russia')
 
     image = os.path.abspath(os.path.dirname('sun.jpeg'))
     image_path = os.path.join(image, 'images', 'sun.jpeg')
@@ -40,7 +40,7 @@ def test_fill_out_the_form():
     # THEN
     browser.element('.table').all('td').even.should(
         have.exact_texts(
-            'Наталия Левочкина',
+            'Natalia La',
             'natalia@mail.ru',
             'Female',
             '1234567890',
@@ -48,7 +48,7 @@ def test_fill_out_the_form():
             'Computer Science',
             'Sports',
             'sun.jpeg',
-            'Москва, улица Московская, дом 56',
+            'Moscow Street, 56, Moscow, Russia',
             'Haryana Karnal'
         )
     )

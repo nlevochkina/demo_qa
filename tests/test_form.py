@@ -4,12 +4,16 @@ from selenium.webdriver.common.by import By
 from selene import browser, be, have
 
 
-def test_fill_out_the_form():
+def test_fill_out_the_form(open_browser_demo_qa):
     browser.open('https://demoqa.com/automation-practice-form')
+
+    browser.driver.execute_script("$('#fixedban').remove()")
+    browser.driver.execute_script("$('footer').remove()")
 
     # WHEN
 
     browser.element('#firstName').should(be.blank).type('Natalia')
+    assert browser.element('#firstName').get_attribute('value') == 'Natalia'
     browser.element('#lastName').should(be.blank).type('La')
     browser.element('#userEmail').should(be.blank).type('natalia@mail.ru')
     browser.element('label[for="gender-radio-2"]').click()
@@ -26,8 +30,7 @@ def test_fill_out_the_form():
     browser.element('label[for="hobbies-checkbox-1"]').click()
     browser.element('#currentAddress').should(be.blank).type('Moscow Street, 56, Moscow, Russia')
 
-    image = os.path.abspath(os.path.dirname('sun.jpeg'))
-    image_path = os.path.join(image, 'images', 'sun.jpeg')
+    image_path = os.path.abspath('./images/sun.jpeg')
     browser.element('#uploadPicture').send_keys(image_path)
 
     browser.element('#state').click()

@@ -7,10 +7,6 @@ from selene import browser, be, have
 def test_fill_out_the_form():
     browser.open('https://demoqa.com/automation-practice-form')
 
-    """
-    Заполняем обязательные поля формы
-    
-    """
     # WHEN
 
     browser.element('#firstName').should(be.blank).type('Наталия')

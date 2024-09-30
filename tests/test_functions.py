@@ -89,7 +89,12 @@ def test_find_suitable_user():
 # "Open Browser [Chrome]"
 
 def universal_function(func, *args):
-    name = func.__name__
+    new_name = func.__name__.replace('_', ' ').title()
+    args_unpacked = ''
+    for i in args:
+        args_unpacked = args_unpacked + i + ', '
+    args_unpacked = args_unpacked.rstrip(", ")
+    return f'{new_name} [{args_unpacked}]'
 
 
 def test_readable_function():
@@ -99,15 +104,15 @@ def test_readable_function():
 
 
 def open_browser(browser_name):
-    actual_result = None
+    actual_result = universal_function(open_browser, f'{browser_name}')
     assert actual_result == "Open Browser [Chrome]"
 
 
 def go_to_companyname_homepage(page_url):
-    actual_result = None
+    actual_result = universal_function(go_to_companyname_homepage, f'{page_url}')
     assert actual_result == "Go To Companyname Homepage [https://companyname.com]"
 
 
 def find_registration_button_on_login_page(page_url, button_text):
-    actual_result = None
+    actual_result = universal_function(find_registration_button_on_login_page, f'{page_url}', f'{button_text}')
     assert actual_result == "Find Registration Button On Login Page [https://companyname.com/login, Register]"

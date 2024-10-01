@@ -1,25 +1,52 @@
 from datetime import time
 
+import pytest
 
-def test_dark_theme_by_time():
+testdata1 = [
+    (3, True),
+    (6, False),
+    (13, False),
+    (22, True),
+    (23, True)
+]
+
+testdata2 = [
+    (3, None, True),
+    (6, None, False),
+    (13, None, False),
+    (22, None, True),
+    (23, None, True),
+    (3, False, False),
+    (6, False, False),
+    (13, False, False),
+    (22, False, False),
+    (23, False, False),
+    (3, True, True),
+    (6, True, True),
+    (13, True, True),
+    (22, True, True),
+    (23, True, True)
+]
+
+
+@pytest.mark.parametrize("timevalue, expected", testdata1)
+def test_dark_theme_by_time(timevalue, expected):
     """
     Протестируйте правильность переключения темной темы на сайте в зависимости от времени
     """
 
     # TODO переключите темную тему в зависимости от времени суток (с 22 до 6 часов утра - ночь)
-
-    current_time = time(hour=23)
-    day = time(6, 0)
-    night = time(22, 0)
-    if current_time >= day and current_time <= night:
+    current_time = time(hour=timevalue)
+    if current_time >= time(hour=6) and current_time < time(hour=22):
         is_dark_theme = False
     else:
         is_dark_theme = True
 
-    assert is_dark_theme is True
+    assert is_dark_theme is expected
 
 
-def test_dark_theme_by_time_and_user_choice():
+@pytest.mark.parametrize("timevalue, usersetting, expected", testdata2)
+def test_dark_theme_by_time_and_user_choice(timevalue, usersetting, expected):
     """
     Протестируйте правильность переключения темной темы на сайте
     в зависимости от времени и выбора пользователя
@@ -31,19 +58,17 @@ def test_dark_theme_by_time_and_user_choice():
     # TODO переключите темную тему в зависимости от времени суток,
     #  но учтите что темная тема может быть включена вручную
 
-    current_time = time(hour=16)
-    day = time(6, 0)
-    night = time(22, 0)
-    dark_theme_enabled_by_user = True
+    current_time = time(hour=timevalue)
+    dark_theme_enabled_by_user = usersetting
 
-    if dark_theme_enabled_by_user != None:
+    if dark_theme_enabled_by_user is not None:
         is_dark_theme = dark_theme_enabled_by_user
-    elif current_time >= day and current_time <= night:
+    elif current_time >= time(hour=6) and current_time < time(hour=22):
         is_dark_theme = False
     else:
         is_dark_theme = True
 
-    assert is_dark_theme is True
+    assert is_dark_theme is expected
 
 
 def test_find_suitable_user():
@@ -62,7 +87,6 @@ def test_find_suitable_user():
 
     for suitable_users in users:
         if suitable_users['name'] == 'Olga':
-            print(suitable_users)
             assert suitable_users == {"name": "Olga", "age": 45}
 
     # TODO найдите всех пользователей младше 20 лет
@@ -91,9 +115,8 @@ def test_find_suitable_user():
 def universal_function(func, *args):
     new_name = func.__name__.replace('_', ' ').title()
     args_unpacked = ''
-    for i in args:
-        args_unpacked = args_unpacked + i + ', '
-    args_unpacked = args_unpacked.rstrip(", ")
+    for _ in args:
+        args_unpacked = ', '.join(args)
     return f'{new_name} [{args_unpacked}]'
 
 

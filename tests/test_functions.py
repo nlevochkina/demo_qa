@@ -114,9 +114,7 @@ def test_find_suitable_user():
 
 def universal_function(func, *args):
     new_name = func.__name__.replace('_', ' ').title()
-    args_unpacked = ''
-    for _ in args:
-        args_unpacked = ', '.join(args)
+    args_unpacked = ', '.join(args)
     return f'{new_name} [{args_unpacked}]'
 
 

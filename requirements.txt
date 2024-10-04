@@ -1,2 +1,4 @@
 pytest
 selene>=2.0.0rc9
+pandas>=2.2.2
+pypdf>=5.0.1

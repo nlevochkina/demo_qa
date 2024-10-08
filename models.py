@@ -52,7 +52,7 @@ class Cart:
         Если продукт уже есть в корзине, то увеличиваем количество
         """
         if product in self.products:
-            self.products.update({product: self.products.get(product) + buy_count})
+            self.products[product] += buy_count
         else:
             self.products[product] = buy_count
 
@@ -64,17 +64,25 @@ class Cart:
         """
 
         if product not in self.products:
-            return('Продукта нет в корзине')
+            raise (ValueError('Продукта нет в корзине'))
         elif remove_count is None or remove_count > self.products[product]:
             del self.products[product]
         else:
             self.products[product] -= remove_count
 
-    def clear(self):
-        raise NotImplementedError
+    def clear(self, product: Product):
+        """
+        Метод очищает корзину
+        """
+        if product not in self.products:
+            raise ValueError('Продуктов нет в корзине')
+        else:
+            self.products.clear()
 
-    def get_total_price(self) -> float:
-        raise NotImplementedError
+    def get_total_price(self, total_price=0) -> float:
+        for product in self.products:
+            total_price += product.price * self.products[product]
+        return total_price
 
     def buy(self):
         """
@@ -82,4 +90,8 @@ class Cart:
         Учтите, что товаров может не хватать на складе.
         В этом случае нужно выбросить исключение ValueError
         """
-        raise NotImplementedError
+        for product, quantity in self.products.items():
+            if not product.check_quantity(quantity):
+                raise ValueError('Товаров не хватает на складе')
+            else:
+                product.buy(quantity)

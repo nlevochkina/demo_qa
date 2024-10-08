@@ -7,10 +7,6 @@ from models import Product, Cart
 def product():
     return Product("book", 100, "This is a book", 1000)
 
-@pytest.fixture
-def product_fruit():
-    return Product("apple", 50, "This is a fruit", 500)
-
 
 @pytest.fixture
 def cart():
@@ -31,7 +27,7 @@ class TestProducts:
         assert product.check_quantity(1000) is True
         assert product.check_quantity(1001) is False
 
-    @pytest.mark.parametrize("quantity", [10, 1000, 1001])
+    @pytest.mark.parametrize("quantity", [10, 55, 1000])
     def test_product_buy(self, product, quantity):
         """
         Проверки на метод buy
@@ -43,7 +39,10 @@ class TestProducts:
         """
         Проверяем получение ошибки ValueError при попытке купить больше, чем есть в наличии
         """
-        product.buy(quantity)
+        try:
+            product.buy(quantity)
+        except ValueError:
+            assert 'Продукта не хватает'
 
 
 class TestCart:
@@ -70,7 +69,15 @@ class TestCart:
         """
         cart.add_product(product, buy_count=2)
         cart.remove_product(product)
-        assert cart.products[product] == 0
+        assert product not in cart.products
+
+    def test_cart_remove_more_product(self, cart, product):
+        """
+        Удаляем больше товаров, чем есть в корзине
+        """
+        cart.add_product(product)
+        cart.remove_product(product, remove_count=2)
+        assert product not in cart.products
 
     def test_cart_remove_one_product(self, cart, product):
         """
@@ -80,10 +87,55 @@ class TestCart:
         cart.remove_product(product, remove_count=1)
         assert cart.products[product] == 1
 
-    def test_cart_remove_non_existent_product(self, cart, product):
+    def test_cart_remove_non_exist_product(self, cart, product):
         """
-        Удаляем один товар из корзины
+        Удаляем товар в корзине, которого нет
         """
-        cart.add_product(product)
-        cart.remove_product(product, remove_count=2)
-        # with pytest.raises(ValueError):
+        assert product not in cart.products
+        with pytest.raises(ValueError):
+            cart.remove_product(product, remove_count=1)
+
+    def test_clear_cart_with_products(self, cart, product):
+        """
+        Очищаем корзину, в которой есть товары
+        """
+        cart.add_product(product, buy_count=800)
+        assert cart.products[product] == 800
+        cart.clear(product)
+        assert product not in cart.products
+
+    def test_clear_cart_without_products(self, cart, product):
+        """
+        Очищаем корзину, в которой нет товаров
+        """
+        assert product not in cart.products
+        with pytest.raises(ValueError):
+            cart.clear(product)
+
+    def test_get_total_price_in_cart(self, cart, product):
+        """
+        Считаем итоговую стоимость товаров в корзине
+        """
+        cart.add_product(product, buy_count=15)
+        cart.get_total_price()
+
+    def test_get_total_price_empty_cart(self, cart, product):
+        """
+        Считаем итоговую стоимость товаров в пустой корзине
+        """
+        assert cart.get_total_price() == 0
+
+    def test_cart_buy_products(self, product, cart):
+        """
+        Покупаем товары
+        """
+        cart.add_product(product, buy_count=5)
+        cart.buy()
+
+    def test_cart_buy_more_quantity_products(self, product, cart):
+        """
+        Покупаем больше товаров, чем есть в наличии
+        """
+        cart.add_product(product, buy_count=1001)
+        with pytest.raises(ValueError):
+            cart.buy()

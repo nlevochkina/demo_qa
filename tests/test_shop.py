@@ -1,11 +1,20 @@
 import pytest
 
-from models import Product
+from models import Product, Cart
 
 
 @pytest.fixture
 def product():
     return Product("book", 100, "This is a book", 1000)
+
+@pytest.fixture
+def product_fruit():
+    return Product("apple", 50, "This is a fruit", 500)
+
+
+@pytest.fixture
+def cart():
+    return Cart()
 
 
 class TestProducts:
@@ -26,7 +35,7 @@ class TestProducts:
     def test_product_buy(self, product, quantity):
         """
         Проверки на метод buy
-        Проверяем результат, если quantity=10 и quantity=1001
+        Проверяем результат c разными quantity
         """
         product.buy(quantity)
 
@@ -44,3 +53,37 @@ class TestCart:
         На некоторые методы у вас может быть несколько тестов.
         Например, негативные тесты, ожидающие ошибку (используйте pytest.raises, чтобы проверить это)
     """
+
+    def test_add_product_to_cart(self, cart, product):
+        """
+        Добавлем товары в корзину
+        """
+        cart.add_product(product, buy_count=1)
+        assert cart.products[product] == 1
+
+        cart.add_product(product, buy_count=2)
+        assert cart.products[product] == 3
+
+    def test_cart_remove_all_product(self, cart, product):
+        """
+        Удаляем все позиции товара из корзины
+        """
+        cart.add_product(product, buy_count=2)
+        cart.remove_product(product)
+        assert cart.products[product] == 0
+
+    def test_cart_remove_one_product(self, cart, product):
+        """
+        Удаляем один товар из корзины
+        """
+        cart.add_product(product, buy_count=2)
+        cart.remove_product(product, remove_count=1)
+        assert cart.products[product] == 1
+
+    def test_cart_remove_non_existent_product(self, cart, product):
+        """
+        Удаляем один товар из корзины
+        """
+        cart.add_product(product)
+        cart.remove_product(product, remove_count=2)
+        # with pytest.raises(ValueError):
